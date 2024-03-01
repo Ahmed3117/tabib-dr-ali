@@ -1,0 +1,38 @@
+{% load static %}
+<nav class="mb-5 navbar navbar-expand-lg sticky-top nav-color">
+    <div class="container">
+       
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main"
+            aria-controls="main" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="main">
+            <ul class="navbar-nav mb-2 mb-lg-0" style = "text-align: left">
+              
+                <li class="nav-item">
+                    <a id="home" class="nav-link p-2 p-lg-3 {% if request.path == '' %}active{% endif %}" aria-current="page" href="/">الصفحة الرئيسية</a>
+                </li>
+                <li class="nav-item">
+                    <a id="home" class="nav-link p-2 p-lg-3 {% if request.path == '' %}active{% endif %}" aria-current="page" href="{% url 'admin:login' %}">أدمن ؟</a>
+                </li>
+
+            </ul>
+            {% block title %}
+  
+            {% endblock title %}
+            <span class="ms-auto" style="color:#ffffff; font-size:40px ;"> موضوعات الميزانية </span>
+            {% if request.user.is_authenticated %}
+            <a class="btn rounded-pill main-btn ms-auto" data-bs-toggle="modal" data-bs-target="#exampleModal"> تسجيل خروج  </a>
+            {% else %}
+            <a class="btn rounded-pill main-btn ms-auto" href="{% url 'accounts:login' %}">  تسجيل دخول  </a>
+            
+            
+            {% endif %}
+            
+        </div>
+
+
+    </div>
+</nav>
+
+

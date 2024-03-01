@@ -1,0 +1,42 @@
+
+
+
+
+<a class="button rounded " data-bs-toggle="modal" data-bs-target="#sessionmidicin-{{ session_id }}">الروشتة </a>
+
+<div class="modal "  id="sessionmidicin-{{ session_id }}" tabindex="-1" aria-labelledby="sessionmidicinLabel-{{ session_id }}" aria-hidden="false">
+    <div class="modal-dialog  modal-xl" >
+        <div class="modal-content">
+            <div class="modal-header" dir="ltr">
+                <h5 class="modal-title" id="sessionmidicinLabel-{{ session_id }}">  الروشتة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body" >
+                
+                <div >  
+                    <div class="row text-white bgc-default-tp1 py-25">
+                        
+                        <div class="col-2 col-sm-2">  العلاج</div>
+                        <div class="d-none d-sm-block  col-2 col-sm-2">  عدد المرات </div>
+                        <div class="d-none d-sm-block col-2 col-sm-2"> التوقيت</div>
+                        <div class="d-none d-sm-block col-2 col-sm-2"> ايام المواظبة</div>
+
+                    </div>
+                    {% for medicin in session_medicins %}
+                    <div class="text-95 text-secondary-d3">
+                        <div class="row mb-2 mb-sm-0 py-25">
+                            <div class="col-2 col-sm-2">{{medicin.name}}</div>
+                            <div class="d-none d-sm-block col-2 col-sm-2">{{medicin.times}}</div>
+                            <div class="d-none d-sm-block col-2 col-sm-2">{{medicin.taken_time}}</div>
+                            <div class="d-none d-sm-block col-2 col-sm-2">{{medicin.day_times}}</div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

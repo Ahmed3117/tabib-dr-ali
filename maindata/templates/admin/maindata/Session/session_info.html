@@ -1,0 +1,37 @@
+
+
+
+
+<a class="button rounded " data-bs-toggle="modal" data-bs-target="#sessioninfo-{{ session_id }}">معلومات </a>
+
+<div class="modal "  id="sessioninfo-{{ session_id }}" tabindex="-1" aria-labelledby="sessioninfoLabel-{{ session_id }}" aria-hidden="false">
+    <div class="modal-dialog  modal-xl" >
+        <div class="modal-content">
+            <div class="modal-header" dir="ltr">
+                <h5 class="modal-title" id="sessioninfoLabel-{{ session_id }}">  معلومات</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body" >
+                
+                <div >  
+                    <div class="row text-white bgc-default-tp1 py-25">
+                        <div class="d-none d-sm-block  col-2 col-sm-2">   مصاريف الجلسة </div>
+                        <div class="d-none d-sm-block col-2 col-sm-2"> المدفوع</div>
+
+                    </div>
+                    
+                    <div class="text-95 text-secondary-d3">
+                        <div class="row mb-2 mb-sm-0 py-25">
+                            <div class="d-none d-sm-block col-2 col-sm-2">{{session_costs}}</div>
+                            <div class="d-none d-sm-block col-2 col-sm-2">{{session_paids}}</div>
+
+                        </div>
+                    </div>
+                   
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

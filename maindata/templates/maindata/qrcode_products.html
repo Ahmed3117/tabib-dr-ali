@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'imgs/logo.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+
+  </head>
+  <body>
+
+    <div class="container">
+        <div class="row mt-3 mb-3">
+            <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-start">
+                 <video style="width:100%;height:100%;" id="preview"></video>   
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center" dir="rtl"> 
+                <div >
+                    <h3> المنتجات الذين تم اضافتها بنجاح :  </h3>
+                    <!-- here will be rows , every one is the name of the hall and edit and delete button -->
+        
+                    <form id = "added_sellprocess_form">
+                        {% csrf_token %}
+                        <div id="added_sellprocess">
+
+                        </div >
+                        <div id="pilldata" style="display: none;">
+                            {% comment %} <div class="form-group">
+                                <label for="client_name">اسم العميل : </label>
+                                <input type="text" class="form-control" id="client_name" name="client_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="national_id">الرقم القومى : </label>
+                                <input type="text" class="form-control" id="national_id" name="national_id">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone_number">التليفون : </label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="adress">العنوان</label>
+                                <input type="text" class="form-control" id="adress" name="adress">
+                            </div> {% endcomment %}
+                        </div>
+                        <div id="pillcheck" style="display: none;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="pillcheck" id="pillcheckbox" onclick = "PillDataToggleVisibility()">
+                                <label class="form-check-label" for="pillcheckbox">هل تريد عمل فاتورة ؟</label>
+                            </div>
+                            
+                            <button type="submit" id="submitproducts" class="btn btn-primary">تاكيد</button>
+                        </div>
+                        
+                        
+                    </form>
+                </div>
+                <div id="total-price">السعر: 0</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 d-flex justify-content-center">
+                <div class="btn-group btn-group-toggle mb-1" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                    <input type="radio" name="options" value="1" autocomplete="off" checked>   الكاميرا الامامية 
+                    </label>
+                    <label class="btn btn-secondary">
+                    <input type="radio" name="options" value="2" autocomplete="off" >   الكاميرا الخلفية 
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script src="{% static 'js/jquery.min.js' %}"></script> 
+<script src="{% static 'js/instascan.min.js' %}"></script> 
+
+
+<script type="text/javascript">
+    
+    let products = [];
+    
+    var scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5, mirror: false });
+    
+    scanner.addListener('scan',function(content){
+        
+        if (products.includes(content)){
+            content = ''
+        }else{
+            products.push(content);
+
+        }
+        var listproductsdiv = document.getElementById('added_sellprocess')
+                var item = `
+                        
+                        <div class="row mb-3" >
+                            <div class="col">
+                                <label for="serial${content}" class="form-label">الرقم المسلسل</label>
+                                <input type="text" name="serial${content}" class="form-control" id="serial${content}" value="${content}">
+                            </div>
+                            
+                            <div class="col">
+                                <label for="quantity${content}" class="form-label">الكمية</label>
+                                <input type="number" name="quantity${content}" class="form-control" id="quantity${content}" value=1>
+                            </div>
+                        </div>
+
+					`
+					listproductsdiv.innerHTML += item
+
+        calculateTotalPrice();
+        
+        toggleSubmitButtonAndPillcheckVisibility();
+        
+    });
+    Instascan.Camera.getCameras().then(function (cameras){
+        if(cameras.length>0){
+            scanner.start(cameras[0]);
+            $('[name="options"]').on('change',function(){
+                if($(this).val()==1){
+                    if(cameras[0]!=""){
+                        scanner.start(cameras[0]);
+                    }else{
+                        alert('No Front camera found!');
+                    }
+                }else if($(this).val()==2){
+                    if(cameras[2]!=""){
+                        scanner.start(cameras[2]);
+                    }else{
+                        alert('No Back camera found!');
+                    }
+                }
+            });
+        }else{
+            console.error('No cameras found.');
+            alert('No cameras found.');
+        }
+    }).catch(function(e){
+        console.error(e);
+        alert(e);
+    });
+
+    ///////////////////////////////////
+    
+
+    function PillDataToggleVisibility() {
+        const pilldata = document.getElementById('pilldata');
+        const pillcheckbox = document.getElementById('pillcheckbox');
+        if (pillcheckbox.checked === true) {
+            pilldata.style.display = 'block';
+        } else {
+            pilldata.style.display = 'none';
+        }
+    }
+
+    function toggleSubmitButtonAndPillcheckVisibility() {
+        const submitButtonContainer = document.getElementById('pillcheck');
+        if (products.length > 0) {
+            submitButtonContainer.style.display = 'block';
+        } else {
+            submitButtonContainer.style.display = 'none';
+        }
+    }
+
+    toggleSubmitButtonAndPillcheckVisibility();
+
+
+    // send form data to backend
+    
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('added_sellprocess_form');
+    const submitButtonContainer = document.getElementById('pillcheck');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Create FormData object to collect form data
+        const formData = new FormData(form);
+        
+        formData.append('products', JSON.stringify(products));
+
+        fetch('{% url 'maindata:receiveqrcodeproductdata' %}', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the backend
+            console.log("fffffffffffffffffffffffffffff")
+            // here i need to reset theform  (make it empty again)
+            const formHTMLContent = document.getElementById('added_sellprocess');
+            formHTMLContent.innerHTML = '';
+            products = [];
+            console.log(data);
+            if (data.admin_url) {
+                // Redirect to the admin_url
+                window.location.href = data.admin_url;
+            } else {
+                // Update UI or perform other actions here
+                submitButtonContainer.style.display = 'none';
+                const totalPriceElement = document.getElementById('total-price');
+                totalPriceElement.textContent = 'السعر ' + 0;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+    
+
+
+
+// Add this function to your JavaScript code
+function calculateTotalPrice() {
+    const form = document.getElementById('added_sellprocess_form');
+    const formData = new FormData(form);
+    formData.append('products', JSON.stringify(products));
+
+    fetch('{% url 'maindata:calculate_total_price' %}', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the received total price
+        const totalPriceElement = document.getElementById('total-price');
+        if (data.total_price !== undefined) {
+            totalPriceElement.textContent = 'السعر: ' + data.total_price;
+        } else {
+            // Handle error response
+            totalPriceElement.textContent = 'Error calculating total price';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+const form = document.getElementById('added_sellprocess_form');
+form.addEventListener('change', calculateTotalPrice);
+
+
+</script>
+
+
+
+</div>
+
+    <!-- js -->
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
+    <script src="{% static 'js/all.min.js' %}"></script> 
+ 
+
+   
+ </body>
+</html>

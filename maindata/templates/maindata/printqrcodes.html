@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load arabic_indic %}
+{% block content %}
+
+<style>
+        
+        .card-img-top {
+            height: 180px; 
+            width: 180; 
+        }
+    </style>
+
+
+    <div class="">
+        
+        
+        <!-- Product Cards -->
+        <div class="row row-cols-1 row-cols-md-5 g-4">
+            {% for product in products %}
+            {% if product.qr_code %}
+                <div class="col">
+                    
+                    <div class="card">
+                        <img src="{{ product.qr_code.url }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            {% if product.serial %}
+                            <p class="card-text">{{ product.serial }}</p>
+                            {% else %}
+                            <p class="card-text">no serial number </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% endblock content %} 

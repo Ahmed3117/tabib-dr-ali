@@ -1,0 +1,115 @@
+
+
+
+
+<a class="button rounded " data-bs-toggle="modal" data-bs-target="#patientreport-{{ patient_id }}">تقرير حساب </a>
+
+<div class="modal "  id="patientreport-{{ patient_id }}" tabindex="-1" aria-labelledby="patientreportLabel-{{ patient_id }}" aria-hidden="false">
+    <div class="modal-dialog  modal-xl" >
+        <div class="modal-content">
+            <div class="modal-header" dir="ltr">
+                <h5 class="modal-title" id="patientreportLabel-{{ patient_id }}">  تقرير حساب</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body" >
+                <div class="row">
+                    <div class="col d-flex justify-content-center">
+                        <h4>مجموع التكاليف</h4>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <h4>تفاصيل التكاليف</h4>
+                    </div>
+                    <div class="col d-flex justify-content-center">
+                        <h4> تفاصيل المدفوعات</h4>
+                        <!-- operation.date_added|date:'m / j' -->
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col mx-2">
+                        <div >  
+                            <div class="row text-white bgc-default-tp1 py-25">
+                                <div class="d-none d-sm-block  col">    الحساب المستحق </div>
+                                <div class="d-none d-sm-block col"> المدفوع</div>
+                                <div class="d-none d-sm-block col"> الباقى</div>
+        
+                            </div>
+                            
+                            <div class="text-95 text-secondary-d3">
+                                <div class="row mb-2 mb-sm-0 py-25">
+                                    <div class="d-none d-sm-block col">{{total_session_costs}}</div>
+                                    <div class="d-none d-sm-block col">{{total_session_paids}}</div>
+                                    <div class="d-none d-sm-block col">{{charge}}</div>
+                                </div>
+                            </div>
+                           
+                        </div>
+        
+                        <form id="add-month-form-{{ patient_id }}" method="POST">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <div class="mb-3">
+                                <label for="numberInput-{{ patient_id }}" class="form-label">الدفعة</label>
+                                <input type="number" class="form-control" id="numberInput-{{ patient_id }}" name="paid" required autofocus>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="sendInputValueToView('{{ patient_id|safe }}','{{ url|safe }}')">اضف</button>
+                        <span style="display:none" id = 'success_message'>succeeded</span>
+                        </form>
+                    </div>
+                    <div class="col mx-2">
+                        <div >  
+                            <div class="row text-white bgc-default-tp1 py-25">
+                                <div class="d-none d-sm-block  col">     السبب </div>
+                                <div class="d-none d-sm-block col"> المدفوع</div>
+                                <div class="d-none d-sm-block col"> التاريخ</div>
+        
+                            </div>
+                            
+                            <div class="text-95 text-secondary-d3">
+                                    {% for session in sessions %}
+                                        
+                                        {% for cost in session.cost_set.all %}
+                                            <div class="row mb-2 mb-sm-0 py-25">
+                                                <div class="d-none d-sm-block col">{{cost.reason}}</div>
+                                                <div class="d-none d-sm-block col">{{cost.cost}}</div>
+                                                <div class="d-none d-sm-block col">{{cost.date_added|date:'m / j / y'}}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div >  
+                            <div class="row text-white bgc-default-tp1 py-25">
+                                <div class="d-none d-sm-block col"> المدفوع</div>
+                                <div class="d-none d-sm-block col"> التاريخ</div>
+        
+                            </div>
+                            
+                            <div class="text-95 text-secondary-d3">
+                                    {% for session in sessions %}
+                                        
+                                        {% for paid in session.paid_set.all %}
+                                            <div class="row mb-2 mb-sm-0 py-25">
+                                                <div class="d-none d-sm-block col">{{paid.paid}}</div>
+                                                <div class="d-none d-sm-block col">{{paid.date_added|date:'m / j / y'}}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

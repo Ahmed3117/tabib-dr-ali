@@ -1,0 +1,45 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrahead %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            shortcuts_div = document.getElementById('content-related')
+            shortcuts_div.innerHTML = `
+            <div class="app-maindata module " style="width:500px;">
+                <table>
+                <caption>
+                    <span class="section" style=" font-weight:bold; font-size:20px;"> اختصارات</span>
+                </caption>
+                    <tbody>
+                        <tr class="model-project">
+                        <th scope="row"><a id="activevisit" style=" font-weight:bold; font-size:17px;color:red;" href=""> الزيارة النشطة</a></th>
+                        </tr>
+                </tbody></table>
+            </div>
+            `
+            user_tools = document.getElementById('user-tools')
+            
+            // 
+        });
+    </script>
+
+    <script>
+
+        fetch('/getactivevisiturl/')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data['active_url'])
+                let activevisitlink = document.getElementById("activevisit");
+                activevisitlink.href = data['active_url'];
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+        });
+    
+    
+    
+    </script>
+    
+    
+{% endblock %}

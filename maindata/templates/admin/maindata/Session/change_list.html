@@ -1,0 +1,239 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+
+{% block result_list %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/all.min.css' %}" />
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script> 
+<script src="{% static 'js/all.min.js' %}"></script> 
+
+<style>
+
+  /* body{
+    background-color: black !important;
+  } */
+  /* #changelist-filter .list-filter-dropdown select {
+    background-color: black !important;
+    width: calc(100% - 30px);
+    margin-right: 15px;
+} */
+
+  .page-header {
+    margin: 0 0 1rem;
+}
+
+.brc-default-l1 {
+    border-color: #dce9f0!important;
+}
+
+.text-grey-m2 {
+    color: #dce9f0!important;
+}
+
+.pb-25, .py-25 {
+    padding: .5rem!important;
+}
+
+.bgc-default-tp1 {
+    background-color: #497d85!important;
+}
+.bgc-default-l4, .bgc-h-default-l4:hover {
+    background-color: #f3f8fa!important;
+}
+.btn-light {
+    color: #757984;
+    background-color: #a8b0c9;
+    border-color: #dddfe4;
+}
+
+a {
+  text-decoration: none;
+}
+
+  /* change error message background color */
+  ul.messagelist li.error {
+    background-color: rgb(241, 181, 181);
+    background-size: 16px auto;
+    color :red;
+    }
+
+  /* Define a CSS style to hide the unwanted parts during printing */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    .modal.show .modal-content * {
+      visibility: visible;
+    }
+    
+  }
+
+  table thead th .text a,
+  table thead th .text {
+    display: block;
+    cursor: pointer;
+    padding: 8px 10px;
+    color: #a47231 !important;
+  }
+  .hidden-column {
+    display: none;
+  }
+
+  .hide-column-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+  }
+
+
+  h1{
+    font-size:20px;
+  }
+  #changelist-filter h3, #changelist-filter details summary {
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 0 15px;
+    margin-bottom: 10px;
+}
+
+  input[type=text], input[type=password], input[type=email], input[type=url], input[type=number], input[type=tel], textarea, select, .vTextField {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0px;
+      margin-top: 0;
+      color: var(--body-fg);
+      background-color: var(--body-bg);
+  }
+</style>
+
+
+
+{% comment %} <div class="pdfbutton">
+  <button class="button btn rounded-pill main-btn" onclick="printPage()" class="button">PDF</button>
+</div> {% endcomment %}
+
+
+    
+<script>
+function printPage() {
+window.print();
+}
+
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const table = document.querySelector('#result_list');
+    const headers = table.querySelectorAll('thead th');
+
+    headers.forEach((header, index) => {
+      const button = document.createElement('button');
+      button.classList.add('hide-column-button');
+
+      if (index !== 0) {
+        button.innerText = 'اخفاء';
+        button.addEventListener('click', (event) => {
+          event.preventDefault(); // Prevent default form submission
+          hideColumn(index);
+        });
+      }
+
+      // Wrap the header text in a span for easier hiding
+      const headerText = header.innerHTML;
+      header.innerHTML = '';
+      const headerSpan = document.createElement('span');
+      headerSpan.innerHTML = headerText;
+      header.appendChild(headerSpan);
+
+      // Insert the button before the column header
+      header.insertBefore(button, header.firstChild);
+    });
+
+    // Show or hide the hidden columns on page load
+    const hiddenColumns = getHiddenColumns();
+    hiddenColumns.forEach((columnIndex) => {
+      hideColumn(columnIndex);
+    });
+
+    // Toggle checkboxes
+    const selectAllCheckbox = document.getElementById('action-toggle');
+    selectAllCheckbox.addEventListener('click', toggleCheckboxes);
+  });
+
+  function hideColumn(columnIndex) {
+    const table = document.querySelector('#result_list');
+    const rows = table.querySelectorAll('tbody tr');
+
+    rows.forEach((row) => {
+      const cells = row.cells;
+      if (cells.length > columnIndex) {
+        if (columnIndex !== 0) {
+          cells[columnIndex].classList.toggle('hidden-column');
+        }
+      }
+    });
+
+    const headers = table.querySelectorAll('thead th');
+    if (headers.length > columnIndex) {
+      if (columnIndex !== 0) {
+        headers[columnIndex].classList.toggle('hidden-column');
+      }
+    }
+
+    // Store the hidden column indices in the localStorage
+    const hiddenColumns = getHiddenColumns();
+    if (hiddenColumns.includes(columnIndex)) {
+      // Remove the column index if already hidden
+      const index = hiddenColumns.indexOf(columnIndex);
+      hiddenColumns.splice(index, 1);
+    } else {
+      // Add the column index if not hidden
+      hiddenColumns.push(columnIndex);
+    }
+    localStorage.setItem('hiddenColumns', JSON.stringify(hiddenColumns));
+  }
+
+  function getHiddenColumns() {
+    const hiddenColumns = localStorage.getItem('hiddenColumns');
+    return hiddenColumns ? JSON.parse(hiddenColumns) : [];
+  }
+
+  function toggleCheckboxes() {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var selectAllCheckbox = document.getElementById('action-toggle');
+
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = selectAllCheckbox.checked;
+    }
+  }
+</script>
+
+{{ block.super }}
+<script>
+// Get the select element
+
+const selectElement = document.querySelector('label select[name="action"]');
+
+console.log(selectElement);
+console.log(input);
+
+// Function to handle the visibility of the number input
+function handleNumberInputVisibility() {
+  if (selectElement.value === 'recordAbsence') {
+    input.removeAttribute('hidden');
+  } else {
+    input.setAttribute('hidden', true);
+  }
+}
+
+// Add an event listener to the select element
+selectElement.addEventListener('change', handleNumberInputVisibility);
+
+</script>
+{% endblock %}
+
+
+
